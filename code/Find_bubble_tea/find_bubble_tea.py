@@ -2,8 +2,9 @@ import os
 import json
 import re
 
-print(os.getcwd())
+
 os.chdir("/")
+print(os.getcwd())
 dataset_path = os.path.join(os.getcwd(), "..\\yelp_dataset\\yelp_dataset")
 save_path = os.path.join(os.getcwd(), "..\\yelp_dataset\\yelp_dataset_Bubble_Tea")
 

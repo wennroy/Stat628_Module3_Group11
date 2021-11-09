@@ -2,8 +2,7 @@ import os
 import json
 import re
 
-
-os.chdir("/")
+os.chdir("D:\\WISC\\stat628\\Module3\\Stat628_Module3_Group11")
 print(os.getcwd())
 dataset_path = os.path.join(os.getcwd(), "..\\yelp_dataset\\yelp_dataset")
 save_path = os.path.join(os.getcwd(), "..\\yelp_dataset\\yelp_dataset_Bubble_Tea")
@@ -33,9 +32,6 @@ with open(os.path.join(dataset_path, "%s" % file_name), 'r', encoding="UTF-8") a
 
 print(total_num)
 
-with open(os.path.join(save_path, "bubble_tea_business_id"), 'w') as bwf:
+with open(os.path.join(save_path, "bubble_tea_business_id.txt"), 'w') as bwf:
     for b_id in all_business_id:
         bwf.write(b_id+"\n")
-
-
-

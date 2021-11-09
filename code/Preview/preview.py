@@ -2,7 +2,7 @@ import os
 import json
 import re
 
-os.chdir("/")
+os.chdir("D:\\WISC\\stat628\\Module3\\Stat628_Module3_Group11")
 print(os.getcwd())
 dataset_path = os.path.join(os.getcwd(), "..\\yelp_dataset\\yelp_dataset")
 save_path = os.path.join(os.getcwd(), "..\\yelp_dataset\\yelp_dataset_preview")

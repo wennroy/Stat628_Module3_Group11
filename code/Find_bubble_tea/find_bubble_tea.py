@@ -10,6 +10,7 @@ save_path = os.path.join(os.getcwd(), "..\\yelp_dataset\\yelp_dataset_Bubble_Tea
 file_name = "business.json"
 total_num = 0
 all_business_id = []
+
 with open(os.path.join(dataset_path, "%s" % file_name), 'r', encoding="UTF-8") as f:
     if os.path.isfile(os.path.join(save_path, "bubble_tea_%s" % file_name)):
         os.remove(os.path.join(save_path, "bubble_tea_%s" % file_name))

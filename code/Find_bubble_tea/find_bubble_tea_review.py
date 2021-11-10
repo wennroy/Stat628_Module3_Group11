@@ -1,6 +1,5 @@
 import os
 import json
-import re
 
 os.chdir("D:\\WISC\\stat628\\Module3\\Stat628_Module3_Group11")
 print(os.getcwd())
@@ -22,18 +21,18 @@ if os.path.isfile(os.path.join(save_path, "bubble_tea_%s" % file_name)):
 with open(os.path.join(dataset_path, "%s" % file_name), 'r', encoding="UTF-8") as f:
     for line in f:
         num += 1
-        if num % 10000 == 0:
+        if num % 100000 == 0:
             print("Loaded %s lines so far." % num)
         dict_json = json.loads(line)
         bid = dict_json["business_id"]
         if not bid in all_business_id:
             continue
         num_bubble_tea += 1
-        if num_bubble_tea % 100 == 0:
+        if num_bubble_tea % 1000 == 0:
             print("Found %s reviews about a bubble tea store." % (num_bubble_tea))
 
         with open(os.path.join(save_path, "bubble_tea_%s" % file_name), 'a') as wf:
-            wf.write(json.dumps(dict_json, indent=4))
+            wf.write(json.dumps(dict_json) + '\n')
 
 print("Total %s reviews" % num)
 print("Total %s reviews for bubble tea" % num_bubble_tea)

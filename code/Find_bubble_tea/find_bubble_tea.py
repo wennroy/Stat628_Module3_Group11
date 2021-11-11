@@ -29,7 +29,7 @@ with open(os.path.join(dataset_path, "%s" % file_name), 'r', encoding="UTF-8") a
 
         if is_bubble_tea:
             with open(os.path.join(save_path, "bubble_tea_%s" % file_name), 'a') as wf:
-                wf.write(json.dumps(dict_json, indent=4))
+                wf.write(json.dumps(dict_json) + '\n')
 
 print(total_num)
 

@@ -73,3 +73,4 @@ def plot_similarity(features, labels):
 plot_similarity(outputs["pooled_output"], sentences)
 
 # BERT
+

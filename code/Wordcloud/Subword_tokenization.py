@@ -93,17 +93,17 @@ import tensorflow_text as text
 Bubble_tea_tokenizer = text.BertTokenizer('Bubble_tea_vocab.txt', **bert_tokenizer_params)
 
 # Take a look what's inside the tokenization
-'''
-token_sentence = []
-words = []
-sentences = []
-txt_tokens = []
-for examples in all_data.take(10):
-    token_batch = Bubble_tea_tokenizer.tokenize(examples[0]).merge_dims(-2, -1)
-    token_sentence.append(token_batch)
-    words.append(Bubble_tea_tokenizer.detokenize(token_batch))
-    txt_tokens.append(tf.gather(vocab, token_batch))
-    sentences.append(examples[0])
+
+# token_sentence = []
+# words = []
+# sentences = []
+# txt_tokens = []
+# for examples in all_data.take(10):
+#     token_batch = Bubble_tea_tokenizer.tokenize(examples[0]).merge_dims(-2, -1)
+#     token_sentence.append(token_batch)
+#     words.append(Bubble_tea_tokenizer.detokenize(token_batch))
+#     txt_tokens.append(tf.gather(vocab, token_batch))
+#     sentences.append(examples[0])
     
 
 vo_1_star = defaultdict(int)
@@ -153,7 +153,7 @@ for i in range(5):
     exec("save_dict = vo_%s_star_str" % (i + 1))
     with open(os.path.join(review_save_path, "%s" % save_file), "w", encoding="utf-8") as wf:
         wf.write(json.dumps(save_dict))
-'''
+
 # START = tf.argmax(tf.constant(reserved_tokens) == "[START]")
 # END = tf.argmax(tf.constant(reserved_tokens) == "[END]")
 # def add_start_end(ragged):

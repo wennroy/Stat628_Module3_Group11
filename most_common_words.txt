@@ -1,5 +1,6 @@
 place: 43476
 good: 35998
+milk: 31271
 boba: 30432
 like: 29832
 bubble: 23824
@@ -94,6 +95,7 @@ next: 5420
 day: 5332
 spot: 5315
 something: 5269
+take: 5214
 shop: 5211
 matcha: 5169
 soup: 5125
@@ -157,7 +159,6 @@ hard: 3732
 50: 3729
 noodles: 3680
 stars: 3661
-took: 3657
 eat: 3641
 chewy: 3628
 dessert: 3628
@@ -297,4 +298,3 @@ least: 2285
 opened: 2280
 town: 2278
 today: 2277
-lots: 2265

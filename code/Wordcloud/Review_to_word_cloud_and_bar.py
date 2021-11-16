@@ -40,8 +40,8 @@ from nltk.tokenize import word_tokenize
 
 stopword = stopwords.words('english')
 english_punctuations_and_filter_words = [',','.',':',';','?','(',')','[',']','&','!','*','@','#','$','%','\'', '\"','/','-','\\',
-                        'get', 'got', 'back', 'ordered', 'tea','teas','milk', 'also','drink','drinks','order', 'and'
-                        'really', 'take']
+                        'get', 'got', 'back', 'ordered', 'tea','teas','also','drink','drinks','order', 'and'
+                        'take','took']
 [stopword.append(_) for _ in english_punctuations_and_filter_words]
 
 # Delete the stopwords and punctuations
@@ -97,9 +97,9 @@ def draw_wordcloud(word_freq, pic_name, input_pic):
     wc.to_file("wordcloud_pic/" + pic_name + cur_time + ".jpg")
     print("Finished writing wordcloud %s"%pic_name)
 
-# draw_wordcloud(total_dict, "word_freq", "wordcloud.jpg")
-# draw_wordcloud(vo_1_star, "vo_1_star", "thumbs_down.jpg")
-# draw_wordcloud(vo_5_star, "vo_5_star", "thumbs_up.jpg")
+draw_wordcloud(total_dict, "word_freq", "wordcloud.jpg")
+draw_wordcloud(vo_1_star, "vo_1_star", "thumbs_down.jpg")
+draw_wordcloud(vo_5_star, "vo_5_star", "thumbs_up.jpg")
 
 ## tf-idf
 
@@ -198,12 +198,13 @@ def draw_hist_tf(word):
     plt.ylabel("tf")
     plt.title(word)
 
-def draw_hist(word):
-    freq_height_tfidf = [tf_idf_vo_1_star[word]]
-    freq_height_tfidf.append(tf_idf_vo_2_star[word])
-    freq_height_tfidf.append(tf_idf_vo_3_star[word])
-    freq_height_tfidf.append(tf_idf_vo_4_star[word])
-    freq_height_tfidf.append(tf_idf_vo_5_star[word])
+def draw_hist(words):
+    freq_height_tfidf = [0 for _ in range(5)]
+    freq_height_tfidf[0] = tf_idf_vo_1_star[word]
+    freq_height_tfidf[1] = tf_idf_vo_2_star[word]
+    freq_height_tfidf[2] = tf_idf_vo_3_star[word]
+    freq_height_tfidf[3] = tf_idf_vo_4_star[word]
+    freq_height_tfidf[4] = tf_idf_vo_5_star[word]
     freq_height = [vo_1_star[word]/words_count[0]]
     freq_height.append(vo_2_star[word]/words_count[1])
     freq_height.append(vo_3_star[word]/words_count[2])
@@ -223,16 +224,10 @@ def draw_hist(word):
     plt.title(word)
 
 
-draw_hist_tfidf("music")
-
-plt.show()
-draw_hist_tf("music")
-plt.show()
-
-word_list = ['cold','hot', 'sweetness', 'ice', 'service', 'bad', 'loud', 'quiet', 'noise', 'togo', 'dessert', 'dumpling', 'affordable', 'snack',
+word_list = ['cold','hot', 'sweetness', 'ice', 'service', 'bad', 'loud', 'quiet', 'noise', 'to','go', 'dessert', 'dumpling', 'affordable', 'snack',
              'bubble','boba','comfortable','music','worse','friendly','unfriendly','friend','familiar','sugar','toppings',
              'topping','##able','un','##ly','taro','coconut','cheap','expensive','environment','coconut','couples','delivery','food',
-             'coffee','sweet','bitter','ever','dine','ingredients','wait','time','money','never','location','delicious','app','fresh']
+             'coffee','sweet','bitter','ever','dine','ingredients','wait','time','money','never','location','delicious','app','fresh','milk','milks']
 word_list.sort()
 
 for word in word_list:

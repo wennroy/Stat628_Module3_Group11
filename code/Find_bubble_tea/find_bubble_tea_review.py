@@ -31,8 +31,8 @@ with open(os.path.join(dataset_path, "%s" % file_name), 'r', encoding="UTF-8") a
         if num_bubble_tea % 1000 == 0:
             print("Found %s reviews about a bubble tea store." % (num_bubble_tea))
 
-        # with open(os.path.join(save_path, "bubble_tea_%s" % file_name), 'a') as wf:
-        #     wf.write(json.dumps(dict_json) + '\n')
+        with open(os.path.join(save_path, "bubble_tea_%s" % file_name), 'a') as wf:
+            wf.write(json.dumps(dict_json) + '\n')
 
 print("Total %s reviews" % num)
 print("Total %s reviews for bubble tea" % num_bubble_tea)

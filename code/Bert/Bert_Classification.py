@@ -136,11 +136,7 @@ def print_my_examples(inputs, results):
 
 
 examples = [
-    'this is such an amazing movie!',  # this is the same sentence tried earlier
-    'The movie was great!',
-    'The movie was meh.',
-    'The movie was okish.',
-    'The movie was terrible...'
+    'this is such a great bubble tea!'
 ]
 
 reloaded_results = tf.sigmoid(reloaded_model(tf.constant(examples)))

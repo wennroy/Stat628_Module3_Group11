@@ -1,5 +1,7 @@
 import os
 import json
+import sys
+import shutil
 import csv
 import numpy as np
 
@@ -29,14 +31,15 @@ print("Loaded model %s" % (saved_model_path))
 # results_examples = classifier_model(tf.constant(examples)) + 1
 # print(results_examples)
 
-interests = ["Tea_Types", "Tea_Ingredients", "Atmosphere", "Price", "Service"]
+interests = ["Tea_Types", "Tea_Ingredients", "Atmosphere", "Price", "Service", "Food"]
 
 Tea_Types = [["green", "tea"], ["oolong", "tea"], ["black", "tea"], ["red", "tea"], ["matcha"], ["herbal"], ["jasmine"],
              ["taiwanese"]]
 Tea_Ingredients = [["bubble"], ["boba"], ["rainbow"], ["taro"]]
-Atmosphere = [["environment"], ["atmosphere"], ["ambiance"]]
+Food = [["dessert"], ["cake"], ["tiramisu"], ["food"], ["drink"], ["coffee"]]
+Atmosphere = [["environment"], ["atmosphere"], ["ambiance"], ["books"], ["noisy"], ["noise"]]
 Price = [["price"]]
-Service = [["service"]]
+Service = [["service"],["open"],["close"], ["ceremony"]]
 
 
 def find_words_in_review(review, words, tea=False):
@@ -57,8 +60,10 @@ def find_words_in_review(review, words, tea=False):
                         continue
                 sentence_with_words.append(sentences[sen_i])
                 break
+    # print("predicting...")
     if sentence_with_words == []:
-        return -1, 0, 0
+        return -1, 0, 0, None
+    # print("Lens of sentence with words %s"%(len(sentence_with_words)))
     ratings = classifier_model(tf.constant(sentence_with_words)) + 1  # tf type
     ratings = ratings.numpy()
     for i, rating in enumerate(ratings):
@@ -68,10 +73,27 @@ def find_words_in_review(review, words, tea=False):
         if rating[0] < 1:
             print("Rating %f belows 1, adjust to 1." % (rating[0]))
             ratings[i] = [1]
-    return ratings.mean(), len(ratings), np.std(ratings)
+    return ratings.mean(), len(ratings), np.std(ratings), ratings
+
+overall_name = "__Overall"
+if not os.path.exists(os.path.join(save_path, overall_name)):
+    os.mkdir(os.path.join(save_path, overall_name))
+cur_overall_save_path = os.path.join(save_path, overall_name)
 
 
 count = 0
+all_ratings_Tea_Types = []
+[all_ratings_Tea_Types.append([]) for _ in range(len(Tea_Types))]
+all_ratings_Tea_Ingredients = []
+[all_ratings_Tea_Ingredients.append([]) for _ in range(len(Tea_Ingredients))]
+all_ratings_Atmosphere = []
+[all_ratings_Atmosphere.append([]) for _ in range(len(Atmosphere))]
+all_ratings_Price = []
+[all_ratings_Price.append([]) for _ in range(len(Price))]
+all_ratings_Service = []
+[all_ratings_Service.append([]) for _ in range(len(Service))]
+all_ratings_Food = []
+[all_ratings_Food.append([]) for _ in range(len(Food))]
 with open(os.path.join(dataset_path, "bubble_tea_business_id.txt"), "r", encoding="utf-8") as business_f:
     for business_name in business_f:
         count += 1
@@ -88,6 +110,7 @@ with open(os.path.join(dataset_path, "bubble_tea_business_id.txt"), "r", encodin
             avg_all_ratings = []
             n_all_ratings = []
             std_all_ratings = []
+            temp_ratings = []
             for words in eval(interest):
                 if len(words) == 2:
                     col_name.append(words[0] + "_" + words[1])
@@ -100,10 +123,23 @@ with open(os.path.join(dataset_path, "bubble_tea_business_id.txt"), "r", encodin
                         if not dict_json["business_id"] == business_name:
                             continue
                         all_reviews.append(dict_json["text"])
-                avg_rating, n_ratings, std_ratings = find_words_in_review(all_reviews, words, tea=len(words) == 2)
+                avg_rating, n_ratings, std_ratings, ratings = find_words_in_review(all_reviews, words, tea=len(words) == 2)
                 avg_all_ratings.append(avg_rating)
                 n_all_ratings.append(n_ratings)
                 std_all_ratings.append(std_ratings)
+                if ratings is None:
+                    temp_ratings.append([])
+                    continue
+                tmp_rating_1 = []
+                for i in range(len(ratings)):
+                    tmp_rating_1.append(ratings[i][0])
+                temp_ratings.append(tmp_rating_1)
+            save_list = 'all_ratings_' + file_name
+            for i in range(len(temp_ratings)):
+                if temp_ratings[i] == []:
+                    continue
+                for rating in temp_ratings[i]:
+                    eval(save_list)[i].append(rating)
 
             with open(os.path.join(cur_save_path, file_name) + ".csv", "w", encoding="utf-8", newline="") as wf:
                 csv_writer = csv.writer(wf)
@@ -111,3 +147,129 @@ with open(os.path.join(dataset_path, "bubble_tea_business_id.txt"), "r", encodin
                 csv_writer.writerow(np.float32(avg_all_ratings))
                 csv_writer.writerow(np.float32(n_all_ratings))
                 csv_writer.writerow(np.float32(std_all_ratings))
+
+            # test for 3
+        # if count == 3:
+    for interest in interests:
+        file_name = str(interest)
+        col_name = []
+        for words in eval(interest):
+            if len(words) == 2:
+                col_name.append(words[0] + "_" + words[1])
+            else:
+                col_name.append(words[0])
+        save_list = 'all_ratings_' + file_name
+        with open(os.path.join(cur_overall_save_path, file_name + ".csv"), 'w', encoding="utf-8", newline="") as wf:
+            csv_write = csv.writer(wf)
+            csv_write.writerow(col_name)
+            csv_write.writerows(eval(save_list))
+
+
+
+
+# Overall level with variance
+'''
+count = 0
+overall_name = "_Overall"
+if not os.path.exists(os.path.join(save_path, overall_name)):
+    os.mkdir(os.path.join(save_path, overall_name))
+cur_save_path = os.path.join(save_path, overall_name)
+for interest in interests:
+    file_name = str(interest)
+    col_name = []
+    avg_all_ratings = []
+    n_all_ratings = []
+    std_all_ratings = []
+    for words in eval(interest):
+        if len(words) == 2:
+            col_name.append(words[0] + "_" + words[1])
+        else:
+            col_name.append(words[0])
+        all_reviews = []
+        with open(os.path.join(dataset_path, "bubble_tea_review.json"), "r", encoding="utf-8") as review_f:
+            for review_json in review_f:
+                dict_json = json.loads(review_json)
+                all_reviews.append(dict_json["text"])
+        print("Total Reviews len %s"%len(all_reviews))
+        avg_rating, n_ratings, std_ratings, ratings = find_words_in_review(all_reviews, words, tea=len(words) == 2)
+        avg_all_ratings.append(avg_rating)
+        n_all_ratings.append(n_ratings)
+        std_all_ratings.append(std_ratings)
+
+    with open(os.path.join(cur_save_path, file_name) + ".csv", "w", encoding="utf-8", newline="") as wf:
+        csv_writer = csv.writer(wf)
+        csv_writer.writerow(col_name)
+        csv_writer.writerow(np.float32(avg_all_ratings))
+        csv_writer.writerow(np.float32(n_all_ratings))
+        csv_writer.writerow(np.float32(std_all_ratings))
+'''
+'''
+# Overall level without variance
+# ["Tea_Types", "Tea_Ingredients", "Atmosphere", "Price", "Service"]
+
+def uninstall(mainpath = os.getcwd()):
+    filelist = os.listdir(mainpath)
+    for filename in filelist:
+        if os.path.isfile(os.path.join(mainpath, filename)):
+            os.remove(os.path.join(mainpath, filename))
+        elif os.path.isdir(os.path.join(mainpath, filename)):
+            shutil.rmtree(os.path.join(mainpath, filename))
+        else:
+            pass
+
+list_Tea_Types = []
+list_Tea_Ingredients = []
+list_Atmosphere = []
+list_Price = []
+list_Service = []
+
+overall_dir = "__overall__"
+if os.path.exists(os.path.join(save_path,overall_dir)):
+    uninstall(mainpath=os.path.join(save_path,overall_dir))
+    os.rmdir(os.path.join(save_path,overall_dir))
+all_dir = os.listdir(save_path)
+for dir in all_dir:
+    cur_path = os.path.join(save_path,dir)
+    for i in range(len(interests)):
+        with open(os.path.join(cur_path, interests[i] + ".csv"), "r", encoding="utf-8") as f:
+            csv_reader = csv.reader(f)
+            label = csv_reader.__next__()
+            mean_val = np.array(csv_reader.__next__(), dtype = np.float32)
+            n_val = np.array(csv_reader.__next__(), dtype = np.float32)
+            std_val = np.array(csv_reader.__next__(), dtype = np.float32)
+            save_list = "list_%s"%(interests[i])
+            eval(save_list).append([mean_val,n_val,std_val])
+
+os.mkdir(os.path.join(save_path,overall_dir))
+save_overall_path = os.path.join(save_path,overall_dir)
+
+def cal_mean_n_std(list_interests):
+    list_sum = [0] * len(list_interests[0][0])
+    list_sum_n = [0] * len(list_interests[0][0])
+    list_sum_var = [0] * len(list_interests[0][0])
+    for i in range(len(list_interests)):
+        list_sum += list_interests[i][0] * list_interests[i][1]
+        list_sum_n += list_interests[i][1]
+    avg_all_ratings = list_sum / list_sum_n
+    avg_n = list_sum_n
+    avg_std = 0
+    return avg_all_ratings,avg_n,avg_std
+
+
+for interest in interests:
+    file_name = str(interest)
+    col_name = []
+    for words in eval(interest):
+        if len(words) == 2:
+            col_name.append(words[0] + "_" + words[1])
+        else:
+            col_name.append(words[0])
+    save_list = "list_%s" % (interest)
+    avg_all_ratings, avg_n, avg_std = cal_mean_n_std(eval(save_list))
+    with open(os.path.join(save_overall_path, file_name + ".csv"), "w", encoding="utf-8", newline = "") as wf:
+        csv_writer = csv.writer(wf)
+        csv_writer.writerow(col_name)
+        csv_writer.writerow(avg_all_ratings)
+        csv_writer.writerow(avg_n)
+        csv_writer.writerow(avg_std)
+'''

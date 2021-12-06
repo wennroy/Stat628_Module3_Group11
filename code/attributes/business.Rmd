@@ -1,0 +1,91 @@
+---
+title: "business"
+author: "Qilu Zhou"
+date: "12/4/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+read data
+```{r}
+data=read.csv("/Users/qiluzhou/Desktop/2021fall/628/group3/milktea/total.csv")
+```
+
+
+```{r}
+#delete paid wifi
+data=data[-grep("paid", data$WiFi),]
+#delete weekly open hours less than 15hours(most missing values)
+data=data[which(data$weekhour>15),]
+```
+
+anova
+```{r}
+summary(aov(data$stars~data$weekhour+data$RestaurantsTakeOut+data$RestaurantsDelivery+data$WiFi+data$BusinessAcceptsCreditCards+data$OutdoorSeating+data$WheelchairAccessible+data$DogsAllowed+data$GoodForKids+data$NoiseLevel+data$Alcohol+data$HasTV+data$RestaurantsReservations+data$RestaurantsGoodForGroups+data$GoodForMeal+data$RestaurantsTableService+data$HappyHour+data$BusinessAcceptsBitcoin+data$ByAppointmentOnly+data$BYOB+data$DriveThru+data$Corkage+data$Smoking+data$GoodForDancing+data$BestNights+data$CoatCheck+data$BYOBCorkage+data$AcceptsInsurance))
+```
+weekhour, wifi, business accept credit cards, outdoor seating, noise level, wheelchair accessible are significant.
+
+regression
+```{r}
+summary(lm(data$stars~data$weekhour+data$WiFi+data$BusinessAcceptsCreditCards+data$OutdoorSeating+data$WheelchairAccessible+data$NoiseLevel))
+```
+
+improve by attributes
+```{r}
+#wifi
+aggregate(stars~WiFi,mean,data=data) # free wifi have 0.2 stars higher than others
+
+#credict cards
+aggregate(stars~BusinessAcceptsCreditCards,mean,data=data) # mention accept or don't accept credict cards will have 0.3 stars higher
+
+#outdoor seating
+aggregate(stars~OutdoorSeating,mean,data=data) #true is 0.2 higher than none
+
+#noise
+aggregate(stars~NoiseLevel,mean,data=data) #quiet is 1 star higher than very_loud
+
+#wheelchairaccessible
+aggregate(stars~WheelchairAccessible,mean,data=data) #0.2 star higher than none
+
+#weekhour
+aggregate(stars~weekhour,mean,data=data)
+```
+
+split weekly open hours
+```{r}
+#<56, 56-84, >84
+for (i in 1:length(data$weekhour)){
+  if (data$weekhour[i]<56){
+    data$hourlevel[i]="<56"
+  }else if (data$weekhour[i]>=56 && data$weekhour[i]<=84){
+    data$hourlevel[i]="56-84"
+  }else{
+    data$hourlevel[i]=">84"
+  }
+}
+```
+
+regression2
+```{r}
+summary(lm(data$stars~data$hourlevel+data$WiFi+data$BusinessAcceptsCreditCards+data$OutdoorSeating+data$WheelchairAccessible+data$NoiseLevel))
+```
+open hours shouldn't be so long
+```{r}
+#open hours
+aggregate(stars~hourlevel,mean,data=data)
+```
+
+use state, name, city to find info about one shop
+```{r}
+findshop=function(x,y,z){
+  print(data[which(data$state==x & data$city==y & data$name==z),])
+}
+```
+
+```{r}
+findshop("OH","Columbus","LittleMoon Cafe and Tea")
+```
+

@@ -491,7 +491,7 @@ for i in range(len(all_data)): # test
         neg_temp_suggest += "We found Food quality wasn't good. "
 
     if drink_sug:
-        if not neg_temp_suggest == []:
+        if not neg_temp_suggest == '':
             neg_temp_suggest += "And drink quality wasn't good. "
         else:
             neg_temp_suggest += "Drink quality wasn't good. "
@@ -598,7 +598,7 @@ for i in range(len(all_data)): # test
         pos_temp += " was/were more popular than other shops! "
 
     if all_data["WiFi"][i] == "free":
-        pos_temp += "Has free WiFi is great for improving the rating of reviews, keep going! "
+        pos_temp += "Having free WiFi is great for improving the rating of reviews, keep going! "
 
     suggestions.append([neg_temp_suggest, pos_temp])
 

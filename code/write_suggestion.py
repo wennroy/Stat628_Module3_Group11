@@ -589,7 +589,7 @@ for i in range(len(all_data)): # test
     if jasmine_pos:
         tea_type_pos.append("jasmine tea")
 
-    if not tea_type_sug == []:
+    if not tea_type_pos == []:
         pos_temp += "In the tea type aspect, we found that the following tea types "
         tea_type_pos_str = ''
         for _ in tea_type_pos:

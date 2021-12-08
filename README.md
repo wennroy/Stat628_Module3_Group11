@@ -1,5 +1,5 @@
 # Stat628 Module3 Group11
-## What makes a good bubble tea shop? Based on Yelp Data
+## How to raise your rating on Yelp - for bubble tea shop
 
 We are Thursday group11. Team members are Qilu Zhou, Jiaying Jia, Zhengyuan Wen.
 
